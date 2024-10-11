@@ -6,7 +6,7 @@ import userRoutes from "./routes/user.route.js";
 import matchRoutes from "./routes/match.route.js";
 import messageRoutes from "./routes/message.route.js";
 
-import connectDB from "./config/connectDB.js";
+import connectDB from "./utils/connectDB.js";
 
 dotenv.config();
 
