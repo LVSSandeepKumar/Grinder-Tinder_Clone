@@ -51,20 +51,21 @@ const userSchema = new mongoose.Schema({
             ref: "User"
         }
     ]
-});
+}, {timestamps: true});
 
-//User Model defined with user schema 
-const User = mongoose.model("User", userSchema);
 
 //Pre method used to implement some function on data before saving to db
 userSchema.pre("save", async function(next) {
-    await bcrypt.hash(this.password, 10);
+    this.password = await bcrypt.hash(this.password, 10);
     next();
 })
 
 //MatchPassword method is added to verify the user password with entered password
-userSchema.methods.matchPassword = async function(enteredPassword) {
+userSchema.methods.matchPassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 }
+
+//User Model defined with user schema 
+const User = mongoose.model("User", userSchema);
 
 export default User;

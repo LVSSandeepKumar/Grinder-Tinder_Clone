@@ -19,10 +19,10 @@ export const Signup = async(req, res) => {
         }
         //Check for user's age 
         if(age < 18) {
-            res.status(400).json({ message: "Poyi bhAAi ki baanisathvam cheskokunda neeku enduku ra dating" });
+            res.status(400).json({ message: "User must be above 18" });
         }
         //If all validation checks are passed, create a new user
-        const newUser = new User({
+        const newUser = await User.create({
             name,
             email,
             password,
@@ -35,6 +35,33 @@ export const Signup = async(req, res) => {
     } catch (error) {
         //Error Handling
         console.log("Error in Signup controller:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+}
+
+export const Login = async(req, res) => {
+    try {
+        //Check if all credentials are passed and read them from request body
+        const { email, password } = req.body;
+        if(!email || !password) {
+            res.status(400).json({ message: "Please fill both the fields" });
+        }
+        //Find the user with the email
+        const user = await User.findOne({email}).select("+password");
+        if(!user) {
+            res.status(404).json({ message: "No user is registered with this email" });
+        }
+        //Check if the user has entered correct password
+        const correctPassword = await user.matchPassword(password);
+        if(!correctPassword) {
+            res.status(400).json({ message: "Incorrect Password" });
+        }
+        //Generate Token and send the user doc in response to frontend
+        generateTokenAndSetCookie(user._id, res);
+        res.status(200).json({ message: "Login Successful", user });
+    } catch (error) {
+        //Error Handling
+        console.log("Error in Login controller:", error);
         res.status(500).json({ message: "Internal Server Error" });
     }
 }
