@@ -7,6 +7,7 @@ import matchRoutes from "./routes/match.route.js";
 import messageRoutes from "./routes/message.route.js";
 
 import connectDB from "./utils/connectDB.js";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -16,6 +17,7 @@ const PORT = process.env.PORT;
 
 //middleware functions
 app.use(express.json()); //middleware to parse incoming requests with json payloads
+app.use(cookieParser()); //middleware to parse incoming requests with cookies
 
 //Routing 
 app.use("/api/auth", authRoutes);

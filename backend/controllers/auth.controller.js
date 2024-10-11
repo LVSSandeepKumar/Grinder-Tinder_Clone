@@ -1,3 +1,5 @@
+import bcrypt from "bcryptjs";
+
 import User from "../models/user.model.js";
 import { generateTokenAndSetCookie } from "../utils/generateToken.js";
 
@@ -21,17 +23,28 @@ export const Signup = async(req, res) => {
         if(age < 18) {
             res.status(400).json({ message: "User must be above 18" });
         }
+        //Check if there is already a user with email and send a warning message
+        const existingUser = await User.findOne({ email });
+        if(existingUser) {
+            res.status(401).json({ message: "User already exists with given email" });
+        }
+        //Hash password before saving the user doc to db
+        const hashedPassword = await bcrypt.hash(password, 10);
         //If all validation checks are passed, create a new user
-        const newUser = await User.create({
+        const newUser = new User({
             name,
             email,
-            password,
+            password: hashedPassword,
             age,
             gender
         });
+        await newUser.save();
         //Generate token and send the response to frontend
         generateTokenAndSetCookie(newUser._id, res);
-        res.status(201).json({ message: "User created successfully", user: newUser});
+        res.status(201).json({ message: "User created successfully", user: {
+            ...newUser._doc,
+            password: null
+        }});
     } catch (error) {
         //Error Handling
         console.log("Error in Signup controller:", error);
@@ -47,18 +60,21 @@ export const Login = async(req, res) => {
             res.status(400).json({ message: "Please fill both the fields" });
         }
         //Find the user with the email
-        const user = await User.findOne({email}).select("+password");
+        const user = await User.findOne({email});
         if(!user) {
             res.status(404).json({ message: "No user is registered with this email" });
         }
         //Check if the user has entered correct password
-        const correctPassword = await user.matchPassword(password);
+        const correctPassword = await bcrypt.compare(password, user.password);
         if(!correctPassword) {
             res.status(400).json({ message: "Incorrect Password" });
         }
         //Generate Token and send the user doc in response to frontend
         generateTokenAndSetCookie(user._id, res);
-        res.status(200).json({ message: "Login Successful", user });
+        res.status(200).json({ message: "Login Successful", user: {
+            ...user._doc,
+            password: null
+        } });
     } catch (error) {
         //Error Handling
         console.log("Error in Login controller:", error);
@@ -74,6 +90,19 @@ export const Logout = async (req,res) => {
     } catch (error) {
         //Error Handling
         console.log("Error in Logout controller", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+}
+
+export const getMe = async(req, res) => {
+    try {
+        //Get the details of currently active user
+        res.status(200).json({
+            user: req.user
+        })
+    } catch (error) {
+        //Error Handling
+        console.log("Error in getMe controller", error);
         res.status(500).json({ message: "Internal Server Error" });
     }
 }
