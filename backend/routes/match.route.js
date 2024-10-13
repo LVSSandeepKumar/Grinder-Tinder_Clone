@@ -5,11 +5,14 @@ import { getMatches, getUserProfiles, swipeLeft, swipeRight } from "../controlle
 //Setup Express Router
 const router = Router();
 
-//Routes for various actions
-router.get("/", protectRoute, getMatches);
-router.get("/user-profiles", protectRoute, getUserProfiles);
+//Use authentication middleware to protect routes from unauthorized access
+router.use(protectRoute);
 
-router.post("/swipe-left/:id", protectRoute, swipeLeft);
-router.post("/swipe-right/:id", protectRoute, swipeRight);
+//Routes for various actions
+router.get("/", getMatches);
+router.get("/user-profiles", getUserProfiles);
+
+router.post("/swipe-left/:id", swipeLeft);
+router.post("/swipe-right/:id", swipeRight);
 
 export default router;
