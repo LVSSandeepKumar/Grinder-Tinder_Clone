@@ -96,9 +96,8 @@ export const Logout = async (req,res) => {
 export const getMe = async(req, res) => {
     try {
         //Get the details of currently active user
-        res.send({
-            user: req.user
-        })
+        const user = req.user;
+        res.status(200).json({user});
     } catch (error) {
         //Error Handling
         console.log("Error in getMe controller", error);

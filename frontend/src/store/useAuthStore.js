@@ -20,10 +20,20 @@ export const useAuthStore = create((set) => ({
         }
     },
 
+    logout: async() => {
+        try {
+            const res = await axiosInstance.post("/auth/logout");
+            if(res.status === 200) set({ authUser: null });
+        } catch (error) {
+            toast.error(error.response.data.message || "Something went wrong");
+        }
+    },
+
     checkAuth: async() => {
         try {
             const res = await axiosInstance.get("/auth/me");
             set({ authUser: res.data.user });
+            console.log(res.data);
         } catch (error) {
             console.log(error);
         } finally {

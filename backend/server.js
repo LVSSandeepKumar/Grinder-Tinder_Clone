@@ -22,7 +22,7 @@ app.use(cookieParser()); //middleware to parse incoming requests with cookies
 app.use(cors({
     origin: "http://localhost:5173",
     credentials: true
-}));                    //middleare to avoid cors errors
+}));                    //middleware to avoid cors errors
 
 //Routing 
 app.use("/api/auth", authRoutes);
