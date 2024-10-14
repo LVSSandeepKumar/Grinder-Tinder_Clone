@@ -31,14 +31,13 @@ export const Signup = async(req, res) => {
         //Hash password before saving the user doc to db
         const hashedPassword = await bcrypt.hash(password, 10);
         //If all validation checks are passed, create a new user
-        const newUser = new User({
+        const newUser = await User.create({
             name,
             email,
             password: hashedPassword,
             age,
             gender
         });
-        await newUser.save();
         //Generate token and send the response to frontend
         generateTokenAndSetCookie(newUser._id, res);
         res.status(201).json({ message: "User created successfully", user: {
@@ -97,7 +96,7 @@ export const Logout = async (req,res) => {
 export const getMe = async(req, res) => {
     try {
         //Get the details of currently active user
-        res.status(200).json({
+        res.send({
             user: req.user
         })
     } catch (error) {
