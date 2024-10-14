@@ -20,6 +20,19 @@ export const useAuthStore = create((set) => ({
         }
     },
 
+    login: async(loginData) => {
+        try {
+            set({ loading: true });
+            const res = await axiosInstance.post("/auth/login", loginData);
+            set({ authUser: res.data.user });
+            toast.success("Login Successful");
+        } catch (error) {
+            toast.error(error.response.data.message || "Something went wrong");
+        } finally {
+            set({ loading: false });
+        }
+    },
+
     logout: async() => {
         try {
             const res = await axiosInstance.post("/auth/logout");
