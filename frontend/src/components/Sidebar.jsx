@@ -8,7 +8,7 @@ const Sidebar = () => {
 
   const toggleSidebar = () => setIsOpen(!isOpen);
 
-  const {getMyMatches, matches, loading} = useMatchStore();
+  const {getMyMatches, matches, loadingMyMatches} = useMatchStore();
 
   useEffect(() => {
     getMyMatches();
@@ -34,7 +34,7 @@ const Sidebar = () => {
             </button>
           </div>
           <div className="flex-grow overflow-y-auto p-4 z-10 relative">
-            {loading ? (
+            {loadingMyMatches ? (
               <LoadingState />
             ) : matches.length === 0 ? (
               <NoMatchesFound />
