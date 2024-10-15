@@ -1,14 +1,18 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Heart, Loader, MessageCircle, X } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useMatchStore } from "../store/useMatchStore";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
 
-  const loading = false;
-  const matches = [];
+  const {getMyMatches, matches, loading} = useMatchStore();
+
+  useEffect(() => {
+    getMyMatches();
+  }, [getMyMatches]);
 
   return (
     <>
@@ -55,9 +59,11 @@ const Sidebar = () => {
         </div>
       </div>
 
-      <button className="lg:hidden fixed top-4 left-4 p-2 bg-pink-500 text-white rounded-md z-0"
-      onClick={toggleSidebar}>
-        <MessageCircle size={16}/>
+      <button
+        className="lg:hidden fixed top-4 left-4 p-2 bg-pink-500 text-white rounded-md z-0"
+        onClick={toggleSidebar}
+      >
+        <MessageCircle size={24} />
       </button>
     </>
   );
