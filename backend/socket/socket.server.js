@@ -10,7 +10,7 @@ export const initializeSocket = (httpServer) => {
     //Initialize new io server on existing http server
     io = new Server(httpServer, {
     cors: {
-      origin: "http://localhost:5173",
+      origin: process.env.CLIENT_URL,
       credentials: true,
     },
   });
