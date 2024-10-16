@@ -71,18 +71,17 @@ export const useMatchStore = create((set) => ({
         }));
         toast.success("You got a new match");
       });
-
     } catch (error) {
       console.log(error);
     }
   },
 
-  unsubscribeFromNewMatches: async() => {
+  unsubscribeFromNewMatches: async () => {
     try {
       const socket = getSocket();
       socket.off("newMatch");
     } catch (error) {
       console.log(error);
     }
-  }
+  },
 }));

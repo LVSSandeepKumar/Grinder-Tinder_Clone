@@ -1,4 +1,5 @@
 import Message from "../models/message.model.js";
+import {getConnectedUsers, getIO} from "../socket/socket.server.js";
 
 export const sendMessage = async(req,res) => {
     try {
@@ -10,6 +11,17 @@ export const sendMessage = async(req,res) => {
             receiver: receiverId,
             content
         });
+        //Get IO and connected users map with the functions
+        const io = getIO();
+        const connectedUsers = getConnectedUsers();
+        //Find the receiver socket id with the receiver id as key
+        const receiverSocketId = connectedUsers.get(receiverId);
+        //If there is one, send the message
+        if(receiverSocketId) {
+            io.to(receiverSocketId).emit("newMessage", {
+                message: newMessage
+            })
+        }
         //Send the message doc in response to frontend
         res.status(201).json({message: newMessage});
     } catch (error) {
