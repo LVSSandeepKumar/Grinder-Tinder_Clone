@@ -52,11 +52,14 @@ export const useAuthStore = create((set) => ({
             const res = await axiosInstance.get("/auth/me");
             set({ authUser: res.data.user });
             initializeSocket(res.data.user._id);
-            console.log(res.data);
         } catch (error) {
             console.log(error);
         } finally {
             set({ checkingAuth: false });
         }
+    },
+
+    setAuthUser: (user) => {
+        set({ authUser: user });
     }
 }));

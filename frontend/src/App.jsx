@@ -16,8 +16,6 @@ function App() {
     checkAuth();
   }, [checkAuth])
 
-  console.log(authUser);
-
   if(checkingAuth) {
     return <p>loading....</p>
   }

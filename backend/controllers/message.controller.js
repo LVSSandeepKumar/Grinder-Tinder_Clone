@@ -4,7 +4,7 @@ import {getConnectedUsers, getIO} from "../socket/socket.server.js";
 export const sendMessage = async(req,res) => {
     try {
         //Get message content and receiver Id from req body
-        const {content, receiverId} = req.body;
+        const {receiverId, content} = req.body;
         //Create a new message 
         const newMessage = await Message.create({
             sender: req.user.id,
