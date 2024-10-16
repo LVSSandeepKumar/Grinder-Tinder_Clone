@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 
-const SOCKET_URL = "http://localhost:8000";
+const SOCKET_URL = import.meta.env.NODE === "development" ? "http://localhost:8000" : "/";
 
 let socket = null;
 
