@@ -11,7 +11,6 @@ export const protectRoute = async (req, res, next) => {
         message: "Not authorized - No token provided",
       });
     };
-    console.log("token :", token);
     //Decode the token using jwt.verify() method
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     if (!decoded) {
@@ -19,13 +18,10 @@ export const protectRoute = async (req, res, next) => {
         message: "Not authorized - Invalid token",
       });
     };
-    console.log("decoded :", decoded);
     //Find the user with that userId and add the doc to request
     const currentUser = await User.findById(decoded.userId);
 
     req.user = currentUser;
-
-    console.log("currentUser :", currentUser);
 
     next();
   } catch (error) {
