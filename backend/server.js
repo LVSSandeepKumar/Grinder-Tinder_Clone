@@ -11,6 +11,7 @@ import messageRoutes from "./routes/message.route.js";
 import connectDB from "./utils/connectDB.js";
 import cookieParser from "cookie-parser";
 import { initializeSocket } from "./socket/socket.server.js";
+import path from "path";
 
 dotenv.config();
 
@@ -19,11 +20,13 @@ const app = express();
 const httpServer = createServer(app);
 const PORT = process.env.PORT;
 
+const __dirname = path.resolve();
+
 //middleware functions
 app.use(express.json()); //middleware to parse incoming requests with json payloads
 app.use(cookieParser()); //middleware to parse incoming requests with cookies
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL,
     credentials: true
 }));                    //middleware to avoid cors errors
 
@@ -35,6 +38,14 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/match", matchRoutes);
 app.use("/api/message", messageRoutes);
+
+if(process.env.NODE_ENV === "production") {
+    app.use(express.static(path.join(__dirname, "/frontend/dist")));
+
+    app.get("*", (req,res) => {
+        res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"))
+    })
+}
 
 //Listen to the application on the assigned port
 httpServer.listen(PORT, () => {
